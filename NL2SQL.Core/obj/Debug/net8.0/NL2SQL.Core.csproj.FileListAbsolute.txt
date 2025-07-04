@@ -1,0 +1,5 @@
+C:\dev\nl2sql\NL2SQL.Core\obj\Debug\net8.0\NL2SQL.Core.csproj.AssemblyReference.cache
+C:\dev\nl2sql\NL2SQL.Core\obj\Debug\net8.0\NL2SQL.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\dev\nl2sql\NL2SQL.Core\obj\Debug\net8.0\NL2SQL.Core.AssemblyInfoInputs.cache
+C:\dev\nl2sql\NL2SQL.Core\obj\Debug\net8.0\NL2SQL.Core.AssemblyInfo.cs
+C:\dev\nl2sql\NL2SQL.Core\obj\Debug\net8.0\NL2SQL.Core.csproj.CoreCompileInputs.cache
