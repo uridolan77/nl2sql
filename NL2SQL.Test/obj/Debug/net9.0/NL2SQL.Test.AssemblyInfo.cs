@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NL2SQL.Test")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+54ca92805f0ae5e2ccf242dbc6f73f4da53a8fd0")]
 [assembly: System.Reflection.AssemblyProductAttribute("NL2SQL.Test")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NL2SQL.Test")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

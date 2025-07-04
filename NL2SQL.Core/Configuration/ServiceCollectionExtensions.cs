@@ -2,11 +2,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NL2SQL.Core.Interfaces;
-using NL2SQL.Core.Interfaces.Enhanced;
 using NL2SQL.Core.Services;
-using NL2SQL.Core.Services.Enhanced;
 using NL2SQL.Core.Repositories;
-using NL2SQL.Core.Repositories.Enhanced;
 using System;
 
 namespace NL2SQL.Core.Configuration
@@ -34,46 +31,20 @@ namespace NL2SQL.Core.Configuration
             services.AddScoped<IMetadataRepository>(provider => 
                 new SqlServerMetadataRepository(connectionString, provider.GetRequiredService<ILogger<SqlServerMetadataRepository>>()));
             
-            services.AddScoped<IEnhancedMetadataRepository>(provider => 
-                new EnhancedMetadataRepository(connectionString, provider.GetRequiredService<ILogger<EnhancedMetadataRepository>>()));
-
             // Core services
             services.AddScoped<INaturalLanguageAnalyzer, SimpleNaturalLanguageAnalyzer>();
-            services.AddScoped<IAdvancedQueryAnalyzer, AdvancedQueryAnalyzer>();
-            services.AddScoped<IGamblingDomainService, GamblingDomainService>();
-            services.AddScoped<ISemanticAnalysisService, SemanticAnalysisService>();
-            services.AddScoped<ITemporalAnalysisService, TemporalAnalysisService>();
-
-            // Schema and context services
             services.AddScoped<ISchemaContextBuilder, SchemaContextBuilder>();
-            services.AddScoped<IIntelligentSchemaBuilder, IntelligentSchemaBuilder>();
-
-            // Prompt services
             services.AddScoped<ISqlPromptBuilder, SqlPromptBuilder>();
-            services.AddScoped<IDynamicPromptBuilder, DynamicPromptBuilder>();
 
             // LLM services
             services.AddScoped<ILLMService, OpenAILLMService>();
-            services.AddScoped<ILLMProviderManager, LLMProviderManager>();
-
-            // Validation and optimization
-            services.AddScoped<ISQLValidator, SQLValidator>();
-
             // Caching
             services.AddMemoryCache();
-            services.AddScoped<IIntelligentCache, IntelligentCache>();
 
             // Main NL2SQL service
             services.AddScoped<INL2SqlService, NL2SqlService>();
-            services.AddScoped<IEnhancedNL2SqlService, EnhancedNL2SqlService>();
 
-            // Analytics and learning
-            services.AddScoped<IRealtimeAnalytics, RealtimeAnalytics>();
-            services.AddScoped<IAdaptiveLearningSystem, AdaptiveLearningSystem>();
 
-            // Health checks
-            services.AddHealthChecks()
-                .AddCheck<NL2SQLHealthCheck>("nl2sql");
 
             return services;
         }
@@ -96,15 +67,9 @@ namespace NL2SQL.Core.Configuration
             services.AddScoped<IMetadataRepository>(provider => 
                 new SqlServerMetadataRepository(config.ConnectionString, provider.GetRequiredService<ILogger<SqlServerMetadataRepository>>()));
             
-            services.AddScoped<IEnhancedMetadataRepository>(provider => 
-                new EnhancedMetadataRepository(config.ConnectionString, provider.GetRequiredService<ILogger<EnhancedMetadataRepository>>()));
-
             // Register all other services...
             RegisterCoreServices(services);
-            RegisterEnhancedServices(services);
             RegisterLLMServices(services, config);
-            RegisterCachingServices(services, config);
-            RegisterAnalyticsServices(services);
 
             return services;
         }
@@ -117,68 +82,18 @@ namespace NL2SQL.Core.Configuration
             services.AddScoped<INL2SqlService, NL2SqlService>();
         }
 
-        private static void RegisterEnhancedServices(IServiceCollection services)
-        {
-            services.AddScoped<IAdvancedQueryAnalyzer, AdvancedQueryAnalyzer>();
-            services.AddScoped<IGamblingDomainService, GamblingDomainService>();
-            services.AddScoped<ISemanticAnalysisService, SemanticAnalysisService>();
-            services.AddScoped<ITemporalAnalysisService, TemporalAnalysisService>();
-            services.AddScoped<IIntelligentSchemaBuilder, IntelligentSchemaBuilder>();
-            services.AddScoped<IDynamicPromptBuilder, DynamicPromptBuilder>();
-            services.AddScoped<IEnhancedNL2SqlService, EnhancedNL2SqlService>();
-        }
+
 
         private static void RegisterLLMServices(IServiceCollection services, NL2SQLConfiguration config)
         {
-            // Register LLM providers based on configuration
-            foreach (var provider in config.LLMProviders.Providers)
-            {
-                switch (provider.ProviderId.ToLowerInvariant())
-                {
-                    case "openai":
-                        services.AddScoped<ILLMService>(sp => new OpenAILLMService(
-                            provider.Configuration["ApiKey"]?.ToString(),
-                            sp.GetRequiredService<ILogger<OpenAILLMService>>()));
-                        break;
-                    case "azure":
-                        services.AddScoped<ILLMService>(sp => new AzureOpenAILLMService(
-                            provider.Configuration,
-                            sp.GetRequiredService<ILogger<AzureOpenAILLMService>>()));
-                        break;
-                    case "anthropic":
-                        services.AddScoped<ILLMService>(sp => new AnthropicLLMService(
-                            provider.Configuration["ApiKey"]?.ToString(),
-                            sp.GetRequiredService<ILogger<AnthropicLLMService>>()));
-                        break;
-                }
-            }
-
-            services.AddScoped<ILLMProviderManager, LLMProviderManager>();
+            // Register OpenAI LLM service as default
+            services.AddScoped<ILLMService>(provider =>
+                new OpenAILLMService("mock-key", provider.GetRequiredService<ILogger<OpenAILLMService>>()));
         }
 
-        private static void RegisterCachingServices(IServiceCollection services, NL2SQLConfiguration config)
-        {
-            if (config.Caching.UseRedis)
-            {
-                services.AddStackExchangeRedisCache(options =>
-                {
-                    options.Configuration = config.Caching.RedisConnectionString;
-                });
-                services.AddScoped<IIntelligentCache, RedisIntelligentCache>();
-            }
-            else
-            {
-                services.AddMemoryCache();
-                services.AddScoped<IIntelligentCache, IntelligentCache>();
-            }
-        }
 
-        private static void RegisterAnalyticsServices(IServiceCollection services)
-        {
-            services.AddScoped<IRealtimeAnalytics, RealtimeAnalytics>();
-            services.AddScoped<IAdaptiveLearningSystem, AdaptiveLearningSystem>();
-            services.AddScoped<ISQLValidator, SQLValidator>();
-        }
+
+
     }
 
     /// <summary>

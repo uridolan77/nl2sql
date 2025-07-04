@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>NL2SQL.Core</id>
+    <version>1.0.0</version>
+    <authors>NL2SQL Development Team</authors>
+    <description>Comprehensive Natural Language to SQL library for gambling industry with advanced semantic analysis and domain expertise</description>
+    <tags>NL2SQL Natural Language SQL Gambling Gaming Business Intelligence AI LLM</tags>
+    <repository type="git" commit="54ca92805f0ae5e2ccf242dbc6f73f4da53a8fd0" />
+    <dependencies>
+      <group targetFramework="net8.0">
+        <dependency id="MathNet.Numerics" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Data.SqlClient" version="5.1.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Caching.Memory" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Caching.StackExchangeRedis" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.Abstractions" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Diagnostics.HealthChecks" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Http" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Logging.Abstractions" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.ML" version="3.0.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.ML.OnnxRuntime" version="1.17.1" exclude="Build,Analyzers" />
+        <dependency id="System.ComponentModel.Annotations" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Numerics.Vectors" version="4.5.0" exclude="Build,Analyzers" />
+        <dependency id="System.Text.Json" version="8.0.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\dev\nl2sql\NL2SQL.Core\bin\Debug\net8.0\NL2SQL.Core.dll" target="lib\net8.0\NL2SQL.Core.dll" />
+  </files>
+</package>

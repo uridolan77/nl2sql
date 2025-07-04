@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>NL2SQL.Infrastructure</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>NL2SQL Development Team</Authors>
+    <Description>Infrastructure implementations for NL2SQL with advanced NLP and semantic search capabilities</Description>
+    <PackageTags>NL2SQL;Infrastructure;NLP;SemanticSearch;VectorEmbeddings;spaCy</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NL2SQL.Core\NL2SQL.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Core ML.NET and Math -->
+    <PackageReference Include="Microsoft.ML" Version="3.0.1" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+    
+    <!-- HTTP Client for external NLP APIs -->
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0" />
+    
+    <!-- Logging and Configuration -->
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
+    
+    <!-- Caching for embeddings -->
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
+    
+    <!-- Text processing -->
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+  </ItemGroup>
+
+</Project>

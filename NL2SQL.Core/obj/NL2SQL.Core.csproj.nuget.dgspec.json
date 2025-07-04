@@ -51,6 +51,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "MathNet.Numerics": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
             "Microsoft.Data.SqlClient": {
               "target": "Package",
               "version": "[5.1.1, )"
@@ -75,13 +79,29 @@
               "target": "Package",
               "version": "[8.0.0, )"
             },
+            "Microsoft.Extensions.Http": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
             "Microsoft.Extensions.Logging.Abstractions": {
               "target": "Package",
               "version": "[8.0.0, )"
             },
+            "Microsoft.ML": {
+              "target": "Package",
+              "version": "[3.0.1, )"
+            },
+            "Microsoft.ML.OnnxRuntime": {
+              "target": "Package",
+              "version": "[1.17.1, )"
+            },
             "System.ComponentModel.Annotations": {
               "target": "Package",
               "version": "[5.0.0, )"
+            },
+            "System.Numerics.Vectors": {
+              "target": "Package",
+              "version": "[4.5.0, )"
             },
             "System.Text.Json": {
               "target": "Package",

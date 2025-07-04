@@ -62,3 +62,4 @@ C:\dev\nl2sql\NL2SQL.Test\obj\Debug\net9.0\refint\NL2SQL.Test.dll
 C:\dev\nl2sql\NL2SQL.Test\obj\Debug\net9.0\NL2SQL.Test.pdb
 C:\dev\nl2sql\NL2SQL.Test\obj\Debug\net9.0\NL2SQL.Test.genruntimeconfig.cache
 C:\dev\nl2sql\NL2SQL.Test\obj\Debug\net9.0\ref\NL2SQL.Test.dll
+C:\dev\nl2sql\NL2SQL.Test\obj\Debug\net9.0\NL2SQL.Test.sourcelink.json

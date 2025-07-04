@@ -22,6 +22,15 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
     <PackageReference Include="System.Text.Json" Version="8.0.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+
+    <!-- Advanced NLP and ML Libraries -->
+    <PackageReference Include="Microsoft.ML" Version="3.0.1" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.17.1" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+
+    <!-- HTTP Client for external NLP services -->
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
   </ItemGroup>
 
 </Project>
