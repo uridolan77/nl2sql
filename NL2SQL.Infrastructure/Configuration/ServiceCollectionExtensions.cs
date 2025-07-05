@@ -26,6 +26,11 @@ namespace NL2SQL.Infrastructure.Configuration
             services.AddScoped<IGamblingDomainKnowledge, GamblingDomainKnowledge>();
             services.AddScoped<IAdvancedNLPPipeline, AdvancedNLPPipeline>();
 
+            // Prompt Builder services
+            services.AddScoped<IPromptBuilderService, PromptBuilderService>();
+            services.AddScoped<IPlaceholderResolverService, PlaceholderResolverService>();
+            services.AddScoped<IBusinessRuleService, BusinessRuleService>();
+
             return services;
         }
     }

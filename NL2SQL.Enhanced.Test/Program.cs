@@ -50,6 +50,9 @@ namespace NL2SQL.Enhanced.Test
                 // Test gambling domain knowledge
                 await TestGamblingDomainKnowledge(host.Services);
 
+                // Test prompt builder module
+                await TestPromptBuilderModule(host.Services);
+
                 // Test complete enhanced system with real schema
                 await TestCompleteEnhancedSystem(host.Services);
 
@@ -326,6 +329,67 @@ namespace NL2SQL.Enhanced.Test
             catch (Exception ex)
             {
                 Console.WriteLine($"❌ Error: {ex.Message}");
+            }
+        }
+
+        static async Task TestPromptBuilderModule(IServiceProvider services)
+        {
+            Console.WriteLine("\n🔧 Testing Prompt Builder Module...");
+
+            try
+            {
+                var promptBuilder = services.GetRequiredService<IPromptBuilderService>();
+                var businessRuleService = services.GetRequiredService<IBusinessRuleService>();
+                var placeholderResolver = services.GetRequiredService<IPlaceholderResolverService>();
+
+                Console.WriteLine("✅ All Prompt Builder services resolved successfully");
+
+                // Test 1: Get available template keys
+                Console.WriteLine("\n📋 Test 1: Get Available Template Keys");
+                var templateKeys = await promptBuilder.GetAvailableTemplateKeysAsync();
+                Console.WriteLine($"   Found {templateKeys.Count} template keys:");
+                foreach (var key in templateKeys.Take(3))
+                {
+                    Console.WriteLine($"   - {key}");
+                }
+
+                // Test 2: Test business rule service
+                Console.WriteLine("\n🔧 Test 2: Business Rule Service");
+                var financialRules = await businessRuleService.GetRulesByCategoryAsync("FINANCIAL", "QUERY_GENERATION");
+                Console.WriteLine($"   Found {financialRules.Count} financial rules:");
+                foreach (var rule in financialRules.Take(2))
+                {
+                    Console.WriteLine($"   - {rule.RuleName}: {rule.RuleContent.Substring(0, Math.Min(60, rule.RuleContent.Length))}...");
+                }
+
+                // Test 3: Test placeholder extraction
+                Console.WriteLine("\n🔍 Test 3: Placeholder Extraction");
+                var sampleTemplate = "Hello {USER_QUESTION}, using {DATABASE_NAME} with {SCHEMA_DEFINITION}";
+                var placeholders = placeholderResolver.ExtractPlaceholderKeys(sampleTemplate);
+                Console.WriteLine($"   Found {placeholders.Count} placeholders: {string.Join(", ", placeholders)}");
+
+                // Test 4: Test individual placeholder resolution
+                Console.WriteLine("\n🔧 Test 4: Individual Placeholder Resolution");
+                var databaseName = await placeholderResolver.ResolvePlaceholderAsync("DATABASE_NAME", "test query", "QUERY_GENERATION");
+                Console.WriteLine($"   DATABASE_NAME resolved to: '{databaseName}'");
+
+                // Test 5: Template validation (if we have templates)
+                if (templateKeys.Any())
+                {
+                    Console.WriteLine("\n🔍 Test 5: Template Validation");
+                    var validation = await promptBuilder.ValidateTemplateAsync(templateKeys.First());
+                    Console.WriteLine($"   Template '{templateKeys.First()}' is valid: {validation.IsValid}");
+                    if (!validation.IsValid && validation.MissingPlaceholders.Any())
+                    {
+                        Console.WriteLine($"   Missing placeholders: {string.Join(", ", validation.MissingPlaceholders.Take(3))}");
+                    }
+                }
+
+                Console.WriteLine("✅ Prompt Builder Module tests completed successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error testing Prompt Builder: {ex.Message}");
             }
         }
 

@@ -6,7 +6,7 @@
     <authors>NL2SQL Development Team</authors>
     <description>Comprehensive Natural Language to SQL library for gambling industry with advanced semantic analysis and domain expertise</description>
     <tags>NL2SQL Natural Language SQL Gambling Gaming Business Intelligence AI LLM</tags>
-    <repository type="git" commit="0992c71c0c894dae3633bd0849bc27d3f9a0a7d6" />
+    <repository type="git" commit="4ba5c932498925b7ce0df05fdd2d20c2545922b8" />
     <dependencies>
       <group targetFramework="net8.0">
         <dependency id="MathNet.Numerics" version="5.0.0" exclude="Build,Analyzers" />
