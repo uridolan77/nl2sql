@@ -1,0 +1,74 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=BIReportingCopilot_Dev;Trusted_Connection=true;MultipleActiveResultSets=true;TrustServerCertificate=true",
+    "BIDatabase": "YOUR_BI_DATABASE_CONNECTION_STRING_HERE",
+    "Redis": "YOUR_REDIS_CONNECTION_STRING_HERE"
+  },
+  "KeyVault": {
+    "Url": "YOUR_AZURE_KEY_VAULT_URL_HERE"
+  },
+  "JwtSettings": {
+    "Secret": "YOUR_JWT_SECRET_KEY_HERE_MINIMUM_32_CHARACTERS",
+    "Issuer": "BIReportingCopilot",
+    "Audience": "BIReportingCopilot-Users",
+    "AccessTokenExpirationMinutes": 60,
+    "RefreshTokenExpirationDays": 30
+  },
+  "OpenAI": {
+    "ApiKey": "YOUR_OPENAI_API_KEY_HERE",
+    "Endpoint": "https://api.openai.com/v1",
+    "Model": "gpt-4",
+    "EmbeddingModel": "text-embedding-3-small",
+    "MaxTokens": 1500,
+    "Temperature": 0.1,
+    "MaxRetries": 3,
+    "TimeoutSeconds": 30,
+    "FrequencyPenalty": 0.0,
+    "PresencePenalty": 0.0
+  },
+  "RateLimiting": {
+    "EnableRateLimiting": false,
+    "RequestsPerMinute": 1000,
+    "RequestsPerHour": 10000
+  },
+  "QuerySettings": {
+    "MaxExecutionTimeSeconds": 60,
+    "MaxResultRows": 1000,
+    "EnableQueryCache": false,
+    "CacheExpiryHours": 1
+  },
+  "SecuritySettings": {
+    "EnableAuditLogging": false,
+    "EnableDataMasking": false,
+    "RequireHttps": false
+  },
+  "FeatureFlags": {
+    "EnableVisualization": true,
+    "EnableExport": true,
+    "EnableSlackIntegration": false,
+    "EnableTeamsIntegration": false,
+    "EnableAnalytics": true,
+    "EnableQuerySuggestions": true,
+    "EnableRealTimeUpdates": true
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore": "Warning",
+      "BIReportingCopilot": "Debug",
+      "Microsoft.Extensions.Diagnostics.HealthChecks": "Warning"
+    },
+    "EnableRequestBodyLogging": true,
+    "MaxRequestBodySize": 8192
+  },
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
+      }
+    }
+  }
+}

@@ -23,7 +23,36 @@ A robust, intelligent, and production-ready Natural Language to SQL (NL2SQL) C# 
 - **Monitoring**: Health checks, metrics collection, distributed tracing
 - **Scalability**: Microservices architecture, container support
 
-## 🏗️ Architecture
+## 🏗️ Solution Structure
+
+### Projects Overview
+
+```
+NL2SQL.sln
+├── NL2SQL.Core/                    # Core domain models, interfaces, and services
+│   ├── Data/                       # Entity Framework models and DbContext
+│   ├── Interfaces/                 # Service contracts and repository interfaces
+│   ├── Models/                     # Domain models and DTOs
+│   ├── Services/                   # Core business logic services
+│   └── Configuration/              # Dependency injection setup
+├── NL2SQL.Infrastructure/          # Data access and external service implementations
+│   ├── Repositories/               # Entity Framework repositories
+│   ├── Services/                   # Advanced NLP and semantic search services
+│   └── Configuration/              # Infrastructure service registration
+├── NL2SQL.Console/                 # Console application for testing
+└── NL2SQL.Enhanced.Test/           # Enhanced test application (real database only)
+```
+
+### Key Components
+
+- **🏗️ Entity Framework DbContext** - `BusinessMetadataDbContext`
+- **📊 Entity Models** - `BusinessTableInfo`, `BusinessColumnInfo` with 50+ metadata fields
+- **🔄 Repository Pattern** - `IBusinessMetadataRepository`, `BusinessMetadataRepository`
+- **🎯 Semantic Search** - Vector embeddings for intelligent table/column matching
+- **🤖 Advanced NLP Pipeline** - Multi-stage natural language processing
+- **⚙️ Dependency Injection** - Full DI container integration
+
+### Architecture Flow
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -39,12 +68,34 @@ A robust, intelligent, and production-ready Natural Language to SQL (NL2SQL) C# 
                        └─────────────────┘    └─────────────────┘
 ```
 
+### Database-First Approach
+
+**🚨 IMPORTANT**: This system operates exclusively with real database schema. There are **no mock data fallbacks**. The system will fail gracefully if the required business metadata tables are not available.
+
 ## 🚀 Quick Start
 
 ### Prerequisites
 - .NET 8.0 or later
 - SQL Server with your gambling business metadata
 - Optional: OpenAI API key for LLM integration
+
+### Building the Solution
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/uridolan77/nl2sql.git
+   cd nl2sql
+   ```
+
+2. **Build the entire solution**:
+   ```bash
+   dotnet build NL2SQL.sln
+   ```
+
+3. **Run tests**:
+   ```bash
+   dotnet run --project NL2SQL.Enhanced.Test
+   ```
 
 ### Installation
 

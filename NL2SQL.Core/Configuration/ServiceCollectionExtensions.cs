@@ -1,9 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using NL2SQL.Core.Interfaces;
 using NL2SQL.Core.Services;
 using NL2SQL.Core.Repositories;
+using NL2SQL.Core.Data;
 using System;
 
 namespace NL2SQL.Core.Configuration
@@ -24,11 +26,18 @@ namespace NL2SQL.Core.Configuration
             services.AddSingleton(nl2SqlConfig);
 
             // Connection string
-            var connectionString = configuration.GetConnectionString("DefaultConnection") 
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? "Server=(localdb)\\mssqllocaldb;Database=BIReportingCopilot_Dev;Trusted_Connection=true;MultipleActiveResultSets=true;TrustServerCertificate=true";
 
-            // Core repositories
-            services.AddScoped<IMetadataRepository>(provider => 
+            // Entity Framework DbContext
+            services.AddDbContext<BusinessMetadataDbContext>(options =>
+                options.UseSqlServer(connectionString));
+
+            // Business metadata repository (will be registered from Infrastructure layer)
+            // services.AddScoped<IBusinessMetadataRepository, BusinessMetadataRepository>();
+
+            // Core repositories (legacy)
+            services.AddScoped<IMetadataRepository>(provider =>
                 new SqlServerMetadataRepository(connectionString, provider.GetRequiredService<ILogger<SqlServerMetadataRepository>>()));
             
             // Core services

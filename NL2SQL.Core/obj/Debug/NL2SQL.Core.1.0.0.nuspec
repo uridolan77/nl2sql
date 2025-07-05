@@ -6,11 +6,14 @@
     <authors>NL2SQL Development Team</authors>
     <description>Comprehensive Natural Language to SQL library for gambling industry with advanced semantic analysis and domain expertise</description>
     <tags>NL2SQL Natural Language SQL Gambling Gaming Business Intelligence AI LLM</tags>
-    <repository type="git" commit="54ca92805f0ae5e2ccf242dbc6f73f4da53a8fd0" />
+    <repository type="git" commit="0992c71c0c894dae3633bd0849bc27d3f9a0a7d6" />
     <dependencies>
       <group targetFramework="net8.0">
         <dependency id="MathNet.Numerics" version="5.0.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Data.SqlClient" version="5.1.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.EntityFrameworkCore" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.EntityFrameworkCore.Design" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.EntityFrameworkCore.SqlServer" version="8.0.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.Caching.Memory" version="8.0.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.Caching.StackExchangeRedis" version="8.0.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.Configuration.Abstractions" version="8.0.0" exclude="Build,Analyzers" />
@@ -27,6 +30,7 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="C:\dev\nl2sql\NL2SQL.Core\bin\Debug\net8.0\NL2SQL.Core.runtimeconfig.json" target="lib\net8.0\NL2SQL.Core.runtimeconfig.json" />
     <file src="C:\dev\nl2sql\NL2SQL.Core\bin\Debug\net8.0\NL2SQL.Core.dll" target="lib\net8.0\NL2SQL.Core.dll" />
   </files>
 </package>

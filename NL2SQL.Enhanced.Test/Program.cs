@@ -2,13 +2,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using NL2SQL.Core.Configuration;
+using NL2SQL.Core.Data;
+using NL2SQL.Core.Interfaces;
 using NL2SQL.Core.Interfaces.Advanced;
+using NL2SQL.Core.Models;
 using NL2SQL.Core.Models.Advanced;
+using NL2SQL.Infrastructure.Configuration;
 using NL2SQL.Infrastructure.Services;
 
 namespace NL2SQL.Enhanced.Test
@@ -19,28 +20,40 @@ namespace NL2SQL.Enhanced.Test
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("🎰 NL2SQL Enhanced Test - Advanced NLP & Semantic Search");
-            Console.WriteLine("=========================================================");
+            Console.WriteLine("🎰 NL2SQL Enhanced Test - Real Database Schema Only");
+            Console.WriteLine("====================================================");
 
             // Build host with dependency injection
             var host = CreateHostBuilder(args).Build();
 
             try
             {
-                // Initialize services
+                // Test database connectivity first - REQUIRED
+                if (!await TestDatabaseConnectivityAsync(host.Services))
+                {
+                    Console.WriteLine("❌ Database connection failed. Cannot proceed without real database schema.");
+                    Console.WriteLine("   Please ensure the database is accessible and contains BusinessTableInfo/BusinessColumnInfo tables.");
+                    Console.WriteLine("\nPress any key to exit...");
+                    Console.ReadKey();
+                    return;
+                }
+
+                // Initialize services with REAL database data only
                 await InitializeServicesAsync(host.Services);
 
-                // Test advanced NLP pipeline
+                // Test advanced NLP pipeline with real schema
                 await TestAdvancedNLPPipeline(host.Services);
 
-                // Test semantic search
+                // Test semantic search with real schema
                 await TestSemanticSearch(host.Services);
 
                 // Test gambling domain knowledge
                 await TestGamblingDomainKnowledge(host.Services);
 
-                // Test complete enhanced system
+                // Test complete enhanced system with real schema
                 await TestCompleteEnhancedSystem(host.Services);
+
+                Console.WriteLine("\n🎉 All tests completed successfully with REAL database schema!");
             }
             catch (Exception ex)
             {
@@ -63,11 +76,18 @@ namespace NL2SQL.Enhanced.Test
                         builder.SetMinimumLevel(LogLevel.Information);
                     });
 
-                    // Add caching
-                    services.AddMemoryCache();
-
-                    // Add HTTP client
+                    // Add HttpClient for vector embedding service
                     services.AddHttpClient();
+
+                    // Add Entity Framework DbContext for business metadata
+                    services.AddDbContext<BusinessMetadataDbContext>(options =>
+                        options.UseSqlServer(ConnectionString));
+
+                    // Add NL2SQL Core services
+                    services.AddNL2SQL(context.Configuration);
+
+                    // Add NL2SQL Infrastructure services
+                    services.AddNL2SQLInfrastructure();
 
                     // Configure vector embedding options
                     services.Configure<VectorEmbeddingOptions>(options =>
@@ -86,19 +106,67 @@ namespace NL2SQL.Enhanced.Test
                     services.AddScoped<IAdvancedNLPPipeline, AdvancedNLPPipeline>();
                 });
 
+        static async Task<bool> TestDatabaseConnectivityAsync(IServiceProvider services)
+        {
+            Console.WriteLine("🔌 Testing database connectivity...");
+
+            try
+            {
+                var repository = services.GetRequiredService<IBusinessMetadataRepository>();
+                var isConnected = await repository.TestConnectionAsync();
+
+                if (isConnected)
+                {
+                    var stats = await repository.GetDatabaseStatisticsAsync();
+                    Console.WriteLine($"✅ Database connection successful!");
+                    Console.WriteLine($"   📊 Found {stats.ActiveTables} active tables and {stats.ActiveColumns} active columns");
+                    Console.WriteLine($"   🏷️ Top domains: {string.Join(", ", stats.TopDomains.Take(3))}");
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("❌ Database connection failed");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Database connectivity test failed: {ex.Message}");
+                return false;
+            }
+        }
+
         static async Task InitializeServicesAsync(IServiceProvider services)
         {
-            Console.WriteLine("🔧 Initializing enhanced NLP services...");
+            Console.WriteLine("🔧 Initializing enhanced NLP services with REAL database metadata...");
 
-            var semanticSearch = services.GetRequiredService<ISemanticSearchService>();
+            try
+            {
+                var repository = services.GetRequiredService<IBusinessMetadataRepository>();
+                var semanticSearch = services.GetRequiredService<ISemanticSearchService>();
 
-            // Load mock metadata for semantic search
-            var tables = GetMockTableMetadata();
-            var columns = GetMockColumnMetadata();
+                Console.WriteLine("📊 Loading table metadata from database...");
+                var tables = await repository.GetTopTablesByImportanceAsync(50);
+                Console.WriteLine($"✅ Loaded {tables.Count} tables from BusinessTableInfo");
 
-            await semanticSearch.InitializeAsync(tables, columns);
+                Console.WriteLine("📋 Loading column metadata from database...");
+                var columns = await repository.GetTopColumnsByImportanceAsync(200);
+                Console.WriteLine($"✅ Loaded {columns.Count} columns from BusinessColumnInfo");
 
-            Console.WriteLine($"✅ Initialized semantic search with {tables.Count} tables and {columns.Count} columns");
+                if (tables.Count == 0 || columns.Count == 0)
+                {
+                    throw new InvalidOperationException("No table or column metadata found in database. Please ensure BusinessTableInfo and BusinessColumnInfo tables contain data.");
+                }
+
+                await semanticSearch.InitializeAsync(tables, columns);
+
+                Console.WriteLine($"✅ Initialized semantic search with {tables.Count} REAL tables and {columns.Count} REAL columns");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error initializing services: {ex.Message}");
+                throw;
+            }
         }
 
         static async Task TestAdvancedNLPPipeline(IServiceProvider services)
@@ -316,188 +384,15 @@ namespace NL2SQL.Enhanced.Test
             }
         }
 
-        static List<TableMetadata> GetMockTableMetadata()
-        {
-            return new List<TableMetadata>
-            {
-                new TableMetadata
-                {
-                    TableName = "tbl_Daily_actions",
-                    BusinessPurpose = "Daily player gambling activity and financial transactions",
-                    Domain = "Gambling",
-                    ImportanceScore = 0.95f,
-                    Keywords = GenerateTableKeywords("tbl_Daily_actions", "Daily player gambling activity and financial transactions")
-                },
-                new TableMetadata
-                {
-                    TableName = "tbl_Daily_actions_players",
-                    BusinessPurpose = "Player demographics and segmentation data",
-                    Domain = "Player Management",
-                    ImportanceScore = 0.90f,
-                    Keywords = GenerateTableKeywords("tbl_Daily_actions_players", "Player demographics and segmentation data")
-                },
-                new TableMetadata
-                {
-                    TableName = "tbl_Games",
-                    BusinessPurpose = "Game catalog and configuration",
-                    Domain = "Game Management",
-                    ImportanceScore = 0.85f,
-                    Keywords = GenerateTableKeywords("tbl_Games", "Game catalog and configuration")
-                },
-                new TableMetadata
-                {
-                    TableName = "tbl_Transactions",
-                    BusinessPurpose = "Financial transactions and payment processing",
-                    Domain = "Finance",
-                    ImportanceScore = 0.92f,
-                    Keywords = GenerateTableKeywords("tbl_Transactions", "Financial transactions and payment processing")
-                }
-            };
-        }
+        // All mock data methods removed - using real database only
 
-        static List<ColumnMetadata> GetMockColumnMetadata()
-        {
-            return new List<ColumnMetadata>
-            {
-                // tbl_Daily_actions columns
-                new ColumnMetadata
-                {
-                    TableName = "tbl_Daily_actions",
-                    ColumnName = "PlayerID",
-                    BusinessMeaning = "Unique player identifier",
-                    DataType = "int",
-                    Synonyms = GenerateColumnSynonyms("PlayerID"),
-                    Keywords = GenerateColumnKeywords("PlayerID", "Unique player identifier")
-                },
-                new ColumnMetadata
-                {
-                    TableName = "tbl_Daily_actions",
-                    ColumnName = "BetsCasino",
-                    BusinessMeaning = "Total casino bets amount",
-                    DataType = "decimal",
-                    Synonyms = GenerateColumnSynonyms("BetsCasino"),
-                    Keywords = GenerateColumnKeywords("BetsCasino", "Total casino bets amount")
-                },
-                new ColumnMetadata
-                {
-                    TableName = "tbl_Daily_actions",
-                    ColumnName = "WinsCasino",
-                    BusinessMeaning = "Total casino wins amount",
-                    DataType = "decimal",
-                    Synonyms = GenerateColumnSynonyms("WinsCasino"),
-                    Keywords = GenerateColumnKeywords("WinsCasino", "Total casino wins amount")
-                },
-                new ColumnMetadata
-                {
-                    TableName = "tbl_Daily_actions",
-                    ColumnName = "Date",
-                    BusinessMeaning = "Transaction date",
-                    DataType = "datetime",
-                    Synonyms = GenerateColumnSynonyms("Date"),
-                    Keywords = GenerateColumnKeywords("Date", "Transaction date")
-                },
-                // tbl_Daily_actions_players columns
-                new ColumnMetadata
-                {
-                    TableName = "tbl_Daily_actions_players",
-                    ColumnName = "PlayerID",
-                    BusinessMeaning = "Unique player identifier",
-                    DataType = "int",
-                    Synonyms = GenerateColumnSynonyms("PlayerID"),
-                    Keywords = GenerateColumnKeywords("PlayerID", "Unique player identifier")
-                },
-                new ColumnMetadata
-                {
-                    TableName = "tbl_Daily_actions_players",
-                    ColumnName = "PlayerSegment",
-                    BusinessMeaning = "Player tier classification (VIP, Regular, etc.)",
-                    DataType = "varchar",
-                    Synonyms = GenerateColumnSynonyms("PlayerSegment"),
-                    Keywords = GenerateColumnKeywords("PlayerSegment", "Player tier classification")
-                }
-            };
-        }
 
-        static List<string> GenerateTableKeywords(string tableName, string businessPurpose)
-        {
-            var keywords = new List<string>();
 
-            // Extract keywords from table name
-            var nameWords = tableName.ToLowerInvariant()
-                .Replace("tbl_", "")
-                .Replace("_", " ")
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            keywords.AddRange(nameWords);
 
-            // Extract keywords from business purpose
-            if (!string.IsNullOrEmpty(businessPurpose))
-            {
-                var purposeWords = businessPurpose.ToLowerInvariant()
-                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                    .Where(w => w.Length > 3);
-                keywords.AddRange(purposeWords);
-            }
 
-            // Add domain-specific keywords
-            if (tableName.ToLowerInvariant().Contains("player"))
-                keywords.AddRange(new[] { "customer", "user", "member", "gambler" });
+        // All mock data methods removed - using Entity Framework repository only
 
-            if (tableName.ToLowerInvariant().Contains("action"))
-                keywords.AddRange(new[] { "activity", "transaction", "event", "behavior" });
 
-            if (tableName.ToLowerInvariant().Contains("game"))
-                keywords.AddRange(new[] { "gaming", "casino", "slot", "betting" });
-
-            return keywords.Distinct().ToList();
-        }
-
-        static List<string> GenerateColumnSynonyms(string columnName)
-        {
-            var synonyms = new List<string>();
-            var nameLower = columnName.ToLowerInvariant();
-
-            var synonymMap = new Dictionary<string, string[]>
-            {
-                { "playerid", new[] { "customer_id", "user_id", "member_id" } },
-                { "deposits", new[] { "funding", "payments_in", "top_ups" } },
-                { "withdrawals", new[] { "cashouts", "payments_out", "payouts" } },
-                { "bets", new[] { "wagers", "stakes", "plays" } },
-                { "wins", new[] { "winnings", "payouts", "prizes" } },
-                { "ggr", new[] { "gross_gaming_revenue", "gross_revenue" } },
-                { "ngr", new[] { "net_gaming_revenue", "net_revenue" } },
-                { "rtp", new[] { "return_to_player", "payout_percentage" } }
-            };
-
-            foreach (var mapping in synonymMap)
-            {
-                if (nameLower.Contains(mapping.Key))
-                {
-                    synonyms.AddRange(mapping.Value);
-                }
-            }
-
-            return synonyms;
-        }
-
-        static List<string> GenerateColumnKeywords(string columnName, string businessMeaning)
-        {
-            var keywords = new List<string>();
-
-            // Extract from column name
-            var nameWords = columnName.ToLowerInvariant()
-                .Split(new[] { '_', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            keywords.AddRange(nameWords);
-
-            // Extract from business meaning
-            if (!string.IsNullOrEmpty(businessMeaning))
-            {
-                var meaningWords = businessMeaning.ToLowerInvariant()
-                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                    .Where(w => w.Length > 2);
-                keywords.AddRange(meaningWords);
-            }
-
-            return keywords.Distinct().ToList();
-        }
+        // All helper methods removed - using Entity Framework repository methods only
     }
 }
